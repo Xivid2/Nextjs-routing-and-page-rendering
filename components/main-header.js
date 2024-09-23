@@ -1,21 +1,19 @@
-import Link from "next/link"
+import Link from 'next/link';
 
 export default function MainHeader() {
     return (
-        <header>
-            <ul>
-                <li>
-                    <Link href="/">
-                        Home
-                    </Link>
-                </li>
+        <header id="main-header">
+            <div id="logo">
+                <Link href="/">NextNews</Link>
+            </div>
 
-                <li>
-                    <Link href="/news">
-                        News
-                    </Link>
-                </li>
-            </ul>
+            <nav>
+                <ul>
+                    <li>
+                        <Link href="/news">News</Link>
+                    </li>
+                </ul>
+            </nav>
         </header>
-    )
+    );
 }
