@@ -1,16 +1,40 @@
-import sql from 'better-sqlite3';
+import Database from 'better-sqlite3';
 
 import { DUMMY_NEWS } from '@/dummy-news';
 
-const db = sql('data.db');
+const db = new Database('data.db');
+db.pragma('journal_mode = WAL');
 
-export function getAllNews() {
+function initDb() {
+    db.prepare(
+       'CREATE TABLE IF NOT EXISTS news (id INTEGER PRIMARY KEY, slug TEXT UNIQUE, title TEXT, content TEXT, date TEXT, image TEXT)'
+    ).run();
+  
+    const { count } = db.prepare('SELECT COUNT(*) as count FROM news').get();
+  
+    if (count === 0) {
+        const insert = db.prepare(
+            'INSERT INTO news (slug, title, content, date, image) VALUES (?, ?, ?, ?, ?)'
+        );
+  
+        DUMMY_NEWS.forEach((news) => {
+            insert.run(news.slug, news.title, news.content, news.date, news.image);
+        });
+    }
+}
+
+initDb();
+
+export async function getAllNews() {
     const news = db.prepare('SELECT * FROM news').all();
+    await new Promise(resolve => setTimeout(() => resolve(), 2000));
     return news;
 }
 
-export function getLatestNews() {
-    return DUMMY_NEWS.slice(0, 3);
+export async function getLatestNews() {
+    const news = db.prepare('SELECT * FROM news').all();
+    await new Promise(resolve => setTimeout(() => resolve(), 2000));
+    return news.slice(0, 3);
 }
 
 export function getAvailableNewsYears() {
